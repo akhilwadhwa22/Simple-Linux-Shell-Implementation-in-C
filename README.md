@@ -1,12 +1,8 @@
 # Simple-Linux-Shell-Implementation-in-C
-## Table of Contents
-+ [Description](#description)
-+ [Getting Started](#getting_started)
-+ [Usage](#usage)
 
 ## Description
 A simple implementation of Linux Shell using C. 
-Takes input from the user, processes it and takes action accordingly.
+
 Set of Implemented built-in functionalities:
 ```
 "cd"
@@ -15,6 +11,7 @@ Set of Implemented built-in functionalities:
 "help"
 "exit"
 ```
+The current implementation uses fork to implement all the other functionalities of a shell in a child process.
 ## Prerequisites
 
 1. Linux/unix system
