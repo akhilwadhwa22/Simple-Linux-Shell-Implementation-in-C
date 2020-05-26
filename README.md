@@ -26,3 +26,12 @@ gcc -o myshell myshell.c
 ./myshell
 
 ```
+## Improvements
+- working on implementing a more optimized buffer for storing history. Some of the potential implementation:
+```
+LRU (Least Recently Used) 
+
+Circular Linked-List
+
+```
+Also working towards implemeting more builtin functions.
