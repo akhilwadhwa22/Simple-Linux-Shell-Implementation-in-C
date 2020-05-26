@@ -16,8 +16,8 @@ The current implementation uses fork to implement all the other standard functio
 ## Prerequisites
 
 ```
-1. Linux/unix system
-2. C compiler
+Linux/unix system
+C compiler
 ```
 
 ## Execution commands
