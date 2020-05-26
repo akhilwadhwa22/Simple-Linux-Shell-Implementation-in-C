@@ -10,13 +10,14 @@ Set of Implemented built-in functionalities:
 "clear": clears the screen
 "help": opens a helper
 "exit": exit the shell to the parent shell.
-
 ```
 The current implementation uses fork to implement all the other functionalities of a shell in a child process.
 ## Prerequisites
 
+```
 1. Linux/unix system
 2. C compiler
+```
 
 ## Execution commands
 
@@ -24,14 +25,11 @@ The current implementation uses fork to implement all the other functionalities 
 gcc -o myshell myshell.c
 
 ./myshell
-
 ```
 ## Improvements
 - working on implementing a more optimized buffer for storing history. Some of the potential implementation:
 ```
 LRU (Least Recently Used) 
-
 Circular Linked-List
-
 ```
 Also working towards implemeting more builtin functions.
