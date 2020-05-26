@@ -1,5 +1,5 @@
 # Simple-Linux-Shell-Implementation-in-C
-
+![](https://github.com/akhilwadhwa22/Simple-Linux-Shell-Implementation-in-C/blob/master/startup_page.png)
 ## Description
 A simple implementation of Linux Shell using C. 
 
