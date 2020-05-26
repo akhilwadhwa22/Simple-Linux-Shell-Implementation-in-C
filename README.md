@@ -11,7 +11,8 @@ Set of Implemented built-in functionalities:
 "help": opens a helper
 "exit": exit the shell to the parent shell.
 ```
-The current implementation uses fork to implement all the other functionalities of a shell in a child process.
+The current implementation uses fork to implement all the other standard functionalities of a shell in a child process.
+
 ## Prerequisites
 
 ```
