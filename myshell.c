@@ -30,10 +30,13 @@ bool searchDuplicate(char command[]){
 //********************Add commands to the history buffer********************
 void add_history(char command[]){ 
 	static int index=0;
-	if(!searchDuplicate(command)){ //Search for duplicate commands
-		buffer[index]=strdup(command); //A circular buffer to store history
-		index=(index+1)%BUFSIZE;
+	if(strlen(command)!=0){ //Make sure an empty command in not added in history
+		if(!searchDuplicate(command)){ //Search for duplicate commands
+			buffer[index]=strdup(command); //A circular buffer to store history
+			index=(index+1)%BUFSIZE;
+		}
 	}
+	else return;
 }
 
 //******************** Display history********************
@@ -75,6 +78,7 @@ char *readCommand(){
 		ch=getchar(); //Read the next character entered
 		if(ch=='\n'){ //If user pressed the enter key
 			command[index]='\0'; //Insert a NULL character at the end of the string.
+			add_history(command); //add the command to history
 			return command;
 		}
 		else if(ch==EOF) 	//If user pressed ctrl + c
@@ -158,7 +162,8 @@ bool processed(char** parsed){
   	if (pid == 0) { //Child process
   		if(execvp(parsed[0],parsed)==-1) //replace the current process image with a new process
 //The first argument is the name of the command
-//The second argument consists of the name of the command and the arguments passed to the command itself. It must also be terminated by NULL.
+//The second argument consists of the name of the command and the arguments passed to the command itself. 
+//It must also be terminated by NULL.
   			perror("Shell Error");
 
   		exit(EXIT_FAILURE);
@@ -208,7 +213,6 @@ int main(){
 	do{
 		printf("\n>> ");
 		command= readCommand(); //read input
- 		add_history(command); //add to history
 		parsed=parseCommand(command); //parse the commands
 		status=processed(parsed); //process the commands
 	
