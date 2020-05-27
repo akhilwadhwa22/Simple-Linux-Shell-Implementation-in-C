@@ -6,9 +6,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define CM_size 64 //Max size for the user input
-#define PARSED_SIZE 12 //Max char size for individual command
+#define CM_size 1024 //Max size for the user input
+#define MAX_COMM 32 // Max no. of commands supported
+#define PARSED_SIZE 32 //Max char size for individual command
 #define DELIM " " //Delimiter for separating commands
+#define DELIM_PIPES "|" //Delimiter for piped commands
 #define NUMBUILT 5 //Number of builtin capabilities implemented
 #define BUFSIZE 25 //Buffer size for storing history
 
@@ -112,6 +114,7 @@ void helper(){
 
 //********************Selecting the builtin function********************
 bool myBuiltIns(char **parsed,int index){
+
 	switch(index){
 		case 0: //cd function
 			if(parsed[1]==NULL)
@@ -139,12 +142,13 @@ bool myBuiltIns(char **parsed,int index){
 
 //********************Processing the user input********************
 bool processed(char** parsed){
+
 	int i=0;
 	pid_t pid;
   	int status;
   	int index=0;
 
-	if(parsed[0]==NULL) //If no input from user
+	if(strlen(parsed[0])==0) //If no input from user
 		return true; 
 
 	for(int i=0;i<NUMBUILT;i++){
@@ -153,28 +157,23 @@ bool processed(char** parsed){
 			return myBuiltIns(parsed, index);
 		}
 	}
-
 	pid = fork(); //Fork a child process
-
 	if (pid < 0) { //Check if fork successful
   		printf("Fork Failed");
  	}
-
   	if (pid == 0) { //Child process
-  		if(execvp(parsed[0],parsed)==-1) //replace the current process image with a new process
-//The first argument is the name of the command
-//The second argument consists of the name of the command and the arguments passed to the command itself. 
-//It must also be terminated by NULL.
+  		if(execvp(parsed[0],parsed)<0) 	//replace the current process image with a new process
+										//The first argument is the name of the command
+										//The second argument consists of the name of the command and the arguments passed to the command itself. 
+										//It must also be terminated by NULL.
   			perror("Shell Error");
 
   		exit(EXIT_FAILURE);
     }
-
 	else {// Parent process
-		
-		do
+		do{
 			waitpid(pid, &status, WUNTRACED); //Wait for the child to finish execution
-		while (!WIFEXITED(status)); //Checks if child finishes successfully
+		}while (!WIFEXITED(status)); //Checks if child finishes successfully
 	}
 
 	return true;
@@ -182,46 +181,63 @@ bool processed(char** parsed){
 
 //********************Parsing the user input********************
 char **parseCommand(char* command){
-	int index=0;
-	int size=0;
+	int i=0;
 	char** parsed=(char**)malloc(sizeof(char*)*PARSED_SIZE);
-	char* str;
-
-	str=strtok(command,DELIM); //Parse the first command
-	parsed[index]=str;
-	index++;
-
-	while(str!=NULL){
-		str=strtok(NULL,DELIM); //Store the consecutive strings
-		parsed[index]=str;
-		index++;
-		size++;
-
-		if(size>=PARSED_SIZE) //If size is greater than the limit, allocate more memory as and when required
-			parsed=realloc(parsed,PARSED_SIZE * sizeof(char*));
+	for(i=0;i<MAX_COMM;i++){
+		//printf("%d\n",i);
+		parsed[i]=strsep(&command, DELIM);
+		if (parsed[i] == NULL) {
+			//printf("\nNULL found\n");
+            break; 
+		}
+		if(strlen(parsed[i])==0)
+			i--;
 	}
-	parsed[index++]="\0";
 	return parsed;
+}
+
+//******************Check if the user asked for pipes***************
+bool checkPipes(char* command,char** pipedstr){
+	for(int i=0;i<2;i++)
+		pipedstr[i]= strsep(&command,DELIM_PIPES);
+	if (pipedstr[1]==NULL)
+		return false;
+	
+	return true;
 }
 
 //********************Main function********************
 int main(){
 	char *command;
-	char **parsed;
+	char **parsed,**pipe1,**pipe2;
+	char* pipedstr[2];
 	bool status;
+	bool pipes;
 
 	shellCover(); //Intialize shell
 	do{
 		printf("\n>> ");
 		command= readCommand(); //read input 
-
-		parsed=parseCommand(command); //parse the commands
-		status=processed(parsed); //process the commands
-	
-	} while(status); //Take in infinite inputs unless EOF or exit is encountered
-
+		//printf("Command: %s\n",command);
+		pipes=checkPipes(command,pipedstr);
+		//printf("0:%ld,1:%ld\n",strlen(pipedstr[0]),strlen(pipedstr[1]));
+		if(pipes){
+			pipe1=parseCommand(pipedstr[0]);
+			pipe2=parseCommand(pipedstr[1]);
+			status =processed(pipe1);
+			status =processed(pipe2);
+			free(pipe1);
+			free(pipe2);
+			//printf("%s | %s\n",pipe2[0],pipe2[1]);
+		}
+		else{
+			parsed=parseCommand(command); //parse the commands
+			status=processed(parsed); //process the commands
+			free(parsed);
+		}
+	}while(status); //Take in infinite inputs unless EOF or exit is encountered
 	//Free allocated Memory
 	free(command);
-	free(parsed);
+
 	return EXIT_SUCCESS;
 }
