@@ -157,6 +157,8 @@ bool processed(char** parsed){
 
   	if (pid == 0) { //Child process
   		if(execvp(parsed[0],parsed)==-1) //replace the current process image with a new process
+//The first argument is the name of the command
+//The second argument consists of the name of the command and the arguments passed to the command itself. It must also be terminated by NULL.
   			perror("Shell Error");
 
   		exit(EXIT_FAILURE);
