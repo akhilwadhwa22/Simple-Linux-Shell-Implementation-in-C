@@ -79,7 +79,7 @@ char *readCommand(){
 		if(ch=='\n'){ //If user pressed the enter key
 			command[index]='\0'; //Insert a NULL character at the end of the string.
 			add_history(command); //add the command to history
-			return command;
+			break;
 		}
 		else if(ch==EOF) 	//If user pressed ctrl + c
 			EXIT_SUCCESS;
@@ -92,6 +92,7 @@ char *readCommand(){
 		if(size>=CM_size) //if size is more than defined CM_size, reallocate with the new size
  			command= realloc(command,size++);
 	}
+	return command;
 }
 
 //********************Help Function********************
@@ -212,7 +213,8 @@ int main(){
 	shellCover(); //Intialize shell
 	do{
 		printf("\n>> ");
-		command= readCommand(); //read input
+		command= readCommand(); //read input 
+
 		parsed=parseCommand(command); //parse the commands
 		status=processed(parsed); //process the commands
 	
