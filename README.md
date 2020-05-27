@@ -33,4 +33,5 @@ gcc -o myshell myshell.c
 LRU (Least Recently Used) 
 Circular Linked-List
 ```
-Also working towards implemeting more builtin functions.
+-Working towards implemeting more builtin functions.
+-Working on adding functionality for pipes
