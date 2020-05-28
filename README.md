@@ -11,9 +11,9 @@ Set of Implemented built-in functionalities:
 "help": opens a helper
 "exit": exit the shell to the parent shell.
 ```
-The current implementation uses fork to implement all the other standard functionalities of a shell in a child process.
+- The current implementation uses fork to implement all the other standard functionalities of a shell in a child process.
 
-The shell now supports 2-level pipe commands.
+- The shell now supports 2-level pipe commands.
 
 ## Prerequisites
 
@@ -35,5 +35,5 @@ gcc -o myshell myshell.c
 LRU (Least Recently Used) 
 Circular Linked-List
 ```
--Working towards implemeting more builtin functions.
--Working on adding functionality for pipes
+- Working towards implemeting more builtin functions.
+- Working on adding functionality for pipes
