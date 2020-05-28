@@ -13,6 +13,8 @@ Set of Implemented built-in functionalities:
 ```
 The current implementation uses fork to implement all the other standard functionalities of a shell in a child process.
 
+The shell now supports 2-level pipe commands.
+
 ## Prerequisites
 
 ```

@@ -13,6 +13,8 @@
 #define DELIM_PIPES "|" //Delimiter for piped commands
 #define NUMBUILT 5 //Number of builtin capabilities implemented
 #define BUFSIZE 25 //Buffer size for storing history
+#define READ 0 //Read end for the pipe
+#define WRITE 1 //Write end for the pipe
 
 char* Builtins[]={ "cd","help","history","clear","exit"}; //Implemented builtin functions 
 char* buffer[BUFSIZE]; //Initialization for the history buffer
@@ -146,6 +148,7 @@ bool processed(char** parsed){
 	int i=0;
 	pid_t pid;
   	int status;
+ 
   	int index=0;
 
 	if(strlen(parsed[0])==0) //If no input from user
@@ -159,7 +162,7 @@ bool processed(char** parsed){
 	}
 	pid = fork(); //Fork a child process
 	if (pid < 0) { //Check if fork successful
-  		printf("Fork Failed");
+  		perror("Fork Failed");
  	}
   	if (pid == 0) { //Child process
   		if(execvp(parsed[0],parsed)<0) 	//replace the current process image with a new process
@@ -176,6 +179,58 @@ bool processed(char** parsed){
 		}while (!WIFEXITED(status)); //Checks if child finishes successfully
 	}
 
+	return true;
+}
+
+//********************Pipe Processing********************
+bool pipeProcessing(char** pipe1, char** pipe2){
+	int status1;
+	int status2;
+	int fd[2];   //File descriptor for the pipe
+	pid_t pid1, pid2;
+
+	if((pipe(fd))==-1){ //Check if pipe failed
+		perror("Pipe Failed");
+	}
+	pid1=fork(); //Fork a child process
+	if(pid1<0){ //check if fork failed
+		perror("Fork Failed"); 
+	}
+
+	if(pid1==0){ 	//1st Child process 
+		printf("I am in first child process\n");
+		close(fd[READ]); //close the read end of the pipe
+		dup2(fd[WRITE],STDOUT_FILENO); //Copy the data from STDOUT to the write end
+		close(fd[WRITE]); //close the write end of the pipe	
+		if(execvp(pipe1[0],pipe1)<0) //replace the current process image with a new process
+			perror("Shell Error"); 
+		exit(EXIT_FAILURE);
+	}
+
+	else{ //1st Parent Process
+		pid2=fork(); //Fork the 2nd child process
+		if(pid2<0){ //check if fork failed
+			perror("Fork Failed");
+		}
+		if(pid2==0){ //2nd child process
+			printf("I am in second child process\n");
+			close(fd[WRITE]); //close the write end of the pipe
+			dup2(fd[READ],STDIN_FILENO); //copy the data from the read end of the pipe to the STDIN 
+			close(fd[READ]); //close the read end
+			if(execvp(pipe2[0],pipe2)<0) //replace the current process image with a new process
+				perror("Shell Error");
+			exit(EXIT_FAILURE);
+		}			
+		else{//2nd Parent process
+			do{
+				printf("I am in second parent process\n");
+				waitpid(-1, &status1, 0); //Wait for the child to finish execution
+              } while(!WIFEXITED(status1)); //Checks if child 2 finishes successfully
+		}
+		do{
+			waitpid(-1, &status2, 0); //Wait for the child to finish execution
+		  } while(!WIFEXITED(status2)); //Checks if child 1 finishes successfully
+	}
 	return true;
 }
 
@@ -224,8 +279,7 @@ int main(){
 		if(pipes){
 			pipe1=parseCommand(pipedstr[0]);
 			pipe2=parseCommand(pipedstr[1]);
-			status =processed(pipe1);
-			status =processed(pipe2);
+			status =pipeProcessing(pipe1,pipe2);
 			free(pipe1);
 			free(pipe2);
 			//printf("%s | %s\n",pipe2[0],pipe2[1]);
