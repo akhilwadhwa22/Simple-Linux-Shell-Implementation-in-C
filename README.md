@@ -36,4 +36,4 @@ LRU (Least Recently Used)
 Circular Linked-List
 ```
 - Working towards implemeting more builtin functions.
-- Working on adding functionality for pipes
+- Working on adding multiple-level functionality for pipes
