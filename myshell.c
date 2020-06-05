@@ -239,10 +239,8 @@ char **parseCommand(char* command){
 	int i=0;
 	char** parsed=(char**)malloc(sizeof(char*)*PARSED_SIZE);
 	for(i=0;i<MAX_COMM;i++){
-		//printf("%d\n",i);
 		parsed[i]=strsep(&command, DELIM);
 		if (parsed[i] == NULL) {
-			//printf("\nNULL found\n");
             break; 
 		}
 		if(strlen(parsed[i])==0)
@@ -273,16 +271,14 @@ int main(){
 	do{
 		printf("\n>> ");
 		command= readCommand(); //read input 
-		//printf("Command: %s\n",command);
 		pipes=checkPipes(command,pipedstr);
-		//printf("0:%ld,1:%ld\n",strlen(pipedstr[0]),strlen(pipedstr[1]));
+
 		if(pipes){
 			pipe1=parseCommand(pipedstr[0]);
 			pipe2=parseCommand(pipedstr[1]);
 			status =pipeProcessing(pipe1,pipe2);
 			free(pipe1);
 			free(pipe2);
-			//printf("%s | %s\n",pipe2[0],pipe2[1]);
 		}
 		else{
 			parsed=parseCommand(command); //parse the commands
