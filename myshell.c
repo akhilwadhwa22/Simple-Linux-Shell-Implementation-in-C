@@ -239,7 +239,7 @@ char **parseCommand(char* command){
 	int i=0;
 	char** parsed=(char**)malloc(sizeof(char*)*PARSED_SIZE);
 	for(i=0;i<MAX_COMM;i++){
-		parsed[i]=strsep(&command, DELIM);
+		parsed[i]=strsep(&command, DELIM); //use the delimiter to separate in the user input
 		if (parsed[i] == NULL) {
             break; 
 		}
