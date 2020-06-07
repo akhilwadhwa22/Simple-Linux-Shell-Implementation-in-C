@@ -6,11 +6,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define CM_size 1024 	// Max size for the user input
-#define MAX_COMM 32 	// Max no. of commands supported
-#define PARSED_SIZE 32 	// Max char size for individual command
+#define CM_size 1024 		// Max size for the user input
+#define MAX_COMM 32 		// Max no. of commands supported
+#define PARSED_SIZE 32 		// Max char size for individual command
 #define DELIM " " 		// Delimiter for separating commands
-#define DELIM_PIPES "|" // Delimiter for piped commands
+#define DELIM_PIPES "|" 	// Delimiter for piped commands
 #define NUMBUILT 5 		// Number of builtin capabilities implemented
 #define BUFSIZE 25 		// Buffer size for storing history
 #define READ 0 			// Read end for the pipe
