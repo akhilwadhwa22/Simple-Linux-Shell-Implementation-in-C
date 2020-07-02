@@ -279,7 +279,7 @@ char **parseCommand(char* command)
 		parsed[i]=strsep(&command, DELIM); // Delimiter to separate in the user input
 		if (parsed[i] == NULL)
 		{
-            break; 
+            		break; 
 		}
 		if(strlen(parsed[i])==0)
 		{
